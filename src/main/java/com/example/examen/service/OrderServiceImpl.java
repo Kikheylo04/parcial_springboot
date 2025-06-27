@@ -2,7 +2,6 @@ package com.example.examen.service;
 
 import java.math.BigDecimal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,11 +15,13 @@ import com.example.examen.repository.ProductRepository;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository) {
+        this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
+    }
 
     @Override
     public Order create(Order order) {
@@ -32,7 +33,8 @@ public class OrderServiceImpl implements OrderService {
             }
 
             Product realProduct = productRepository.findById(item.getProduct().getId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + item.getProduct().getId()));
+                    .orElseThrow(
+                            () -> new RuntimeException("Producto no encontrado con ID: " + item.getProduct().getId()));
 
             item.setProduct(realProduct);
             item.setOrder(order);
@@ -63,7 +65,8 @@ public class OrderServiceImpl implements OrderService {
             }
 
             Product product = productRepository.findById(item.getProduct().getId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + item.getProduct().getId()));
+                    .orElseThrow(
+                            () -> new RuntimeException("Producto no encontrado con ID: " + item.getProduct().getId()));
 
             item.setProduct(product);
             item.setOrder(existingOrder);
