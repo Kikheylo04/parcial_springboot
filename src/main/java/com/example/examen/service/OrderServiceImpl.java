@@ -1,11 +1,14 @@
 package com.example.examen.service;
 
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.example.examen.exception.OrderNotFoundException;
+import com.example.examen.exception.ProductNotFoundException;
 import com.example.examen.model.Order;
 import com.example.examen.model.OrderItem;
 import com.example.examen.model.Product;
@@ -29,12 +32,13 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderItem item : order.getItems()) {
             if (item.getProduct() == null || item.getProduct().getId() == null) {
-                throw new RuntimeException("El producto es obligatorio y debe tener un ID");
+                throw new InvalidParameterException();
             }
 
             Product realProduct = productRepository.findById(item.getProduct().getId())
                     .orElseThrow(
-                            () -> new RuntimeException("Producto no encontrado con ID: " + item.getProduct().getId()));
+                            () -> new ProductNotFoundException(item.getProduct().getId()));
+                    
 
             item.setProduct(realProduct);
             item.setOrder(order);
@@ -50,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order update(Long id, Order updatedOrder) {
         Order existingOrder = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Orden no encontrada con ID: " + id));
+                .orElseThrow(() -> new OrderNotFoundException(id));
 
         existingOrder.setClient(updatedOrder.getClient());
         existingOrder.setDate(updatedOrder.getDate());
@@ -61,12 +65,13 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderItem item : updatedOrder.getItems()) {
             if (item.getProduct() == null || item.getProduct().getId() == null) {
-                throw new RuntimeException("Producto inválido");
+                throw new InvalidParameterException();
             }
 
             Product product = productRepository.findById(item.getProduct().getId())
                     .orElseThrow(
-                            () -> new RuntimeException("Producto no encontrado con ID: " + item.getProduct().getId()));
+                            () -> new ProductNotFoundException(item.getProduct().getId())
+                    );
 
             item.setProduct(product);
             item.setOrder(existingOrder);
