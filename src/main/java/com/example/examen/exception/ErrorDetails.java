@@ -17,7 +17,6 @@ public class ErrorDetails {
         this.errorCode = errorCode;
     }
     
-    // Versión simplificada si no necesitas errorCode
     public ErrorDetails(LocalDateTime timestamp, String message, String details) {
         this.timestamp = timestamp;
         this.message = message;

@@ -39,15 +39,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<Product> list(String name, Pageable pageable) {
         if (name != null && !name.isEmpty()) {
-            // Aquí puedes implementar búsqueda por nombre si tienes un método custom
-            return productRepository.findAll(pageable); // simple por ahora
+            return productRepository.findAll(pageable);
         }
         return productRepository.findAll(pageable);
     }
 
     @Override
     public Integer getStockFromExternalService(Long productId) {
-        // Simulación
         return 0;
     }
 }
