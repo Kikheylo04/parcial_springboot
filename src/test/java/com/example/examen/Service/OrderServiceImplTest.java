@@ -178,7 +178,7 @@ class OrderServiceImplTest {
     void testUpdateOrder_NullProductId_ThrowsInvalidParameterException() {
         Long id = 1L;
 
-        Product product = new Product(); // <- sin ID
+        Product product = new Product();
         OrderItem item = new OrderItem();
         item.setProduct(product);
 
