@@ -25,7 +25,7 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<Page<Product>> list(
-            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "") String name,
             @PageableDefault(size = 10, page = 0) Pageable pageable) {
         return ResponseEntity.ok(productService.list(name, pageable));
     }

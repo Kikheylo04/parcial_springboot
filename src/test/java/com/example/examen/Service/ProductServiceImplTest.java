@@ -29,6 +29,39 @@ class ProductServiceImplTest {
     }
 
     @Test
+    void testCreateProduct() {
+        Product product = new Product();
+        product.setName("Producto de prueba");
+
+        when(productRepository.save(product)).thenReturn(product);
+
+        Product result = productService.create(product);
+
+        assertNotNull(result);
+        assertEquals("Producto de prueba", result.getName());
+        verify(productRepository, times(1)).save(product);
+    }
+
+    @Test
+    void testUpdateProduct() {
+        Long id = 1L;
+        Product product = new Product();
+        product.setName("Original");
+
+        Product updatedProduct = new Product();
+        updatedProduct.setId(id);
+        updatedProduct.setName("Original");
+
+        when(productRepository.save(product)).thenReturn(updatedProduct);
+
+        Product result = productService.update(id, product);
+
+        assertNotNull(result);
+        assertEquals(id, result.getId());
+        verify(productRepository).save(product);
+    }
+
+    @Test
     void testDelete() {
         Long productId = 1L;
         doNothing().when(productRepository).deleteById(productId);
@@ -69,6 +102,18 @@ class ProductServiceImplTest {
         when(productRepository.findAll(pageable)).thenReturn(page);
 
         Page<Product> result = productService.list(null, pageable);
+
+        assertNotNull(result);
+        verify(productRepository, times(1)).findAll(pageable);
+    }
+
+    @Test
+    void testList_WithEmptyName() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Product> page = new PageImpl<>(List.of());
+        when(productRepository.findAll(pageable)).thenReturn(page);
+
+        Page<Product> result = productService.list("", pageable);
 
         assertNotNull(result);
         verify(productRepository, times(1)).findAll(pageable);
